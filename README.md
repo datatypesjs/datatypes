@@ -72,12 +72,18 @@ const color = new Color()
 ```
 ---
 
-The constructor always expects exactly one object as the argument or no argument at all.
+The constructor always expects exactly one object as the argument
+or no argument at all.
 
 Example:
 ```js
 const color = new Color({red: 250, green: 35, blue: 129})
 ```
+
+All object keys must be assigned to the object instance
+(e.g. through `Object.assign(this, optionsObject)`).
+This allows the user of the class to easily assign custom object properties
+in addition to the designated ones.
 
 To provide other constructor methods use the `from<datatype>` pattern.
 
@@ -104,7 +110,7 @@ through duck typing. So as long as an object has the properties
 (This is derived from the native `Array.from`)
 
 
-Each public property must have a setter and a getter.
+Each public computed property must have a setter and a getter.
 Always using getters (e.g. `hsl` instead of `toHsl`)
 avoids premature optimization and a ensures a consistent API.
 It also hides the implementation detail
@@ -124,7 +130,8 @@ export default class Color {
 ```
 ---
 
-Additionally to the setter there must be a `.set<property>` method to enable chaining.
+Additionally to the setter there must be a `.set<property>` method
+to enable chaining.
 
 Example:
 ```js
@@ -154,7 +161,8 @@ doSomething(hslObject.hsl)
 
 ---
 
-All methods must accept one argument at most. For more arguments an object must be used.
+All methods must accept one argument at most.
+For more arguments an object must be used.
 
 - Ensures backwards compatible extensibility
 - Increases readability
@@ -174,9 +182,10 @@ const color = new Color(250, 35, 129)
 
 Mandatory instance methods:
 
-- `toJSON` - Must return a plain JavaScript object which can be JSON stringified.
+- `toJSON` - Must return a plain JavaScript object
+  which can be JSON stringified.
   For example `color.toJSON()` could yield `{red: 250, green: 35, blue: 129}`
-  `.toJSON()` is an alias for `.json`
+  `.toJSON()` is an alias for `.object`
 
 - `toString` - Must return a string representation of the object.
   For example `color.toString()` could yield `'rgb(250, 35, 129)'`
@@ -197,6 +206,18 @@ Private methods must start with an underscore `_`
 ---
 
 Datatypes classes shall be preferred over custom implementations.
+
+
+---
+Attention: `color instanceof Color` is anti-pattern in most cases!
+
+Instead of `if (color instanceof Color) return color.red`
+use `if (color.hasOwnProperty('red')) return color.red`
+
+---
+
+Use "synchronous usage of asynchronous code" pattern for asynchronous code.
+
 
 
 ### No inheritance
